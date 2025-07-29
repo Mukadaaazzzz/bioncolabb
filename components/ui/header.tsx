@@ -1,35 +1,83 @@
 import Link from "next/link";
-import Logo from "./logo";
+import Image from "next/image";
 
 export default function Header() {
   return (
-    <header className="fixed top-2 z-30 w-full md:top-6">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="relative flex h-14 items-center justify-between gap-3 rounded-2xl bg-white/90 px-3 shadow-lg shadow-black/[0.03] backdrop-blur-xs before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] before:border before:border-transparent before:[background:linear-gradient(var(--color-gray-100),var(--color-gray-200))_border-box] before:[mask-composite:exclude_!important] before:[mask:linear-gradient(white_0_0)_padding-box,_linear-gradient(white_0_0)]">
-          {/* Site branding */}
-          <div className="flex flex-1 items-center">
-            <Logo />
+    <header className="fixed w-full z-50 bg-white/90 backdrop-blur-md border-b border-slate-200/75">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="flex items-center justify-between h-16 md:h-20">
+          {/* Logo - Tight spacing */}
+          <div className="flex items-center">
+            <Link href="/" className="flex items-center group">
+              <Image 
+                src="/biocol.png" 
+                width={66} 
+                height={66} 
+                alt="Bioncolab Logo"
+                
+              />
+              <span className="-ml-2 text-1x2 font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+                Bioncolab
+              </span>
+            </Link>
           </div>
 
-          {/* Desktop sign in links */}
-          <ul className="flex flex-1 items-center justify-end gap-3">
-            <li>
-              <Link
-                href="/signin"
-                className="btn-sm bg-white text-gray-800 shadow-sm hover:bg-gray-50"
-              >
-                Login
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/signup"
-                className="btn-sm bg-gray-800 text-gray-200 shadow-sm hover:bg-gray-900"
-              >
-                Register
-              </Link>
-            </li>
-          </ul>
+          {/* Desktop navigation */}
+          <nav className="hidden md:flex md:grow">
+            <ul className="flex grow justify-end flex-wrap items-center space-x-1">
+              <li>
+                <Link 
+                  href="/labs" 
+                  className="text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium transition duration-150 ease-in-out"
+                >
+                  Labs
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  href="/challenges" 
+                  className="text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium transition duration-150 ease-in-out"
+                >
+                  Challenges
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  href="/simulations" 
+                  className="text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium transition duration-150 ease-in-out"
+                >
+                  Simulations
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  href="/about" 
+                  className="text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium transition duration-150 ease-in-out"
+                >
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  href="/signin" 
+                  className="btn-sm text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 ml-3 rounded-lg shadow-sm"
+                >
+                  Sign in
+                </Link>
+              </li>
+            </ul>
+          </nav>
+
+          {/* Mobile menu button - Only shows menu icon */}
+          <div className="md:hidden flex items-center">
+            <button className="text-gray-500 hover:text-gray-600 p-2">
+              <svg className="w-6 h-6" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <rect y="4" width="24" height="2" rx="1" fill="currentColor"/>
+                <rect y="11" width="24" height="2" rx="1" fill="currentColor"/>
+                <rect y="18" width="24" height="2" rx="1" fill="currentColor"/>
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </header>

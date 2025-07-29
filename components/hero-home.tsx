@@ -1,149 +1,116 @@
+import Link from "next/link";
 import Image from "next/image";
-import PageIllustration from "@/components/page-illustration";
-import Avatar01 from "@/public/images/avatar-01.jpg";
-import Avatar02 from "@/public/images/avatar-02.jpg";
-import Avatar03 from "@/public/images/avatar-03.jpg";
-import Avatar04 from "@/public/images/avatar-04.jpg";
-import Avatar05 from "@/public/images/avatar-05.jpg";
-import Avatar06 from "@/public/images/avatar-06.jpg";
 
 export default function HeroHome() {
   return (
-    <section className="relative">
-      <PageIllustration />
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        {/* Hero content */}
-        <div className="pb-12 pt-32 md:pb-20 md:pt-40">
-          {/* Section header */}
-          <div className="pb-12 text-center md:pb-16">
-            <div
-              className="mb-6 border-y [border-image:linear-gradient(to_right,transparent,--theme(--color-slate-300/.8),transparent)1]"
-              data-aos="zoom-y-out"
-            >
-              <div className="-mx-0.5 flex justify-center -space-x-3">
-                <Image
-                  className="box-content rounded-full border-2 border-gray-50"
-                  src={Avatar01}
-                  width={32}
-                  height={32}
-                  alt="Avatar 01"
-                />
-                <Image
-                  className="box-content rounded-full border-2 border-gray-50"
-                  src={Avatar02}
-                  width={32}
-                  height={32}
-                  alt="Avatar 01"
-                />
-                <Image
-                  className="box-content rounded-full border-2 border-gray-50"
-                  src={Avatar03}
-                  width={32}
-                  height={32}
-                  alt="Avatar 02"
-                />
-                <Image
-                  className="box-content rounded-full border-2 border-gray-50"
-                  src={Avatar04}
-                  width={32}
-                  height={32}
-                  alt="Avatar 03"
-                />
-                <Image
-                  className="box-content rounded-full border-2 border-gray-50"
-                  src={Avatar05}
-                  width={32}
-                  height={32}
-                  alt="Avatar 04"
-                />
-                <Image
-                  className="box-content rounded-full border-2 border-gray-50"
-                  src={Avatar06}
-                  width={32}
-                  height={32}
-                  alt="Avatar 05"
-                />
-              </div>
-            </div>
-            <h1
-              className="mb-6 border-y text-5xl font-bold [border-image:linear-gradient(to_right,transparent,--theme(--color-slate-300/.8),transparent)1] md:text-6xl"
-              data-aos="zoom-y-out"
-              data-aos-delay={150}
-            >
-              The website builder you're <br className="max-lg:hidden" />
-              looking for
-            </h1>
-            <div className="mx-auto max-w-3xl">
-              <p
-                className="mb-8 text-lg text-gray-700"
-                data-aos="zoom-y-out"
-                data-aos-delay={300}
-              >
-                Simple is a modern website builder powered by AI that changes
-                how companies create user interfaces together.
-              </p>
-              <div className="relative before:absolute before:inset-0 before:border-y before:[border-image:linear-gradient(to_right,transparent,--theme(--color-slate-300/.8),transparent)1]">
-                <div
-                  className="mx-auto max-w-xs sm:flex sm:max-w-none sm:justify-center"
-                  data-aos="zoom-y-out"
-                  data-aos-delay={450}
-                >
-                  <a
-                    className="btn group mb-4 w-full bg-linear-to-t from-blue-600 to-blue-500 bg-[length:100%_100%] bg-[bottom] text-white shadow-sm hover:bg-[length:100%_150%] sm:mb-0 sm:w-auto"
-                    href="#0"
-                  >
-                    <span className="relative inline-flex items-center">
-                      Start Free Trial{" "}
-                      <span className="ml-1 tracking-normal text-blue-300 transition-transform group-hover:translate-x-0.5">
-                        -&gt;
-                      </span>
-                    </span>
-                  </a>
-                  <a
-                    className="btn w-full bg-white text-gray-800 shadow-sm hover:bg-gray-50 sm:ml-4 sm:w-auto"
-                    href="#0"
-                  >
-                    Learn More
-                  </a>
-                </div>
-              </div>
+    <section className="relative min-h-screen pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden bg-gray-900">
+      {/* ---- EPIC BIOTECH BACKGROUND ---- */}
+      {/* Animated cell membrane pattern */}
+      <div className="absolute inset-0 opacity-14">
+        <div className="absolute inset-0 bg-[url('/cell-pattern.svg')] bg-[size:400px] animate-[membraneFlow_40s_linear_infinite]"></div>
+      </div>
+      
+      {/* Floating holographic organelles */}
+      <div className="absolute top-1/4 left-1/4 w-32 h-32 rounded-full bg-cyan-500/10 blur-[80px] animate-[organellePulse_8s_ease-in-out_infinite]"></div>
+      <div className="absolute bottom-1/3 right-1/5 w-40 h-40 rounded-full bg-purple-500/10 blur-[100px] animate-[organellePulse_12s_ease-in-out_infinite]"></div>
+      
+      {/* DNA strand animation */}
+      <div className="absolute -right-20 top-1/3 w-[500px] h-[800px]">
+        <Image 
+          src="/dna-strand.png" 
+          alt="" 
+          fill
+          className="object-contain opacity-10 animate-[dnaFloat_25s_linear_infinite]"
+        />
+      </div>
+
+      {/* ---- HERO CONTENT ---- */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="text-center">
+          {/* Holographic badge */}
+          <div className="inline-flex mb-8 p-1 rounded-full bg-gray-800/50 backdrop-blur-md border border-cyan-400/30 shadow-lg shadow-cyan-500/10">
+            <div className="px-4 py-2 text-sm font-mono text-cyan-400 bg-gray-900/50 rounded-full flex items-center">
+              <span className="relative flex h-3 w-3 mr-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
+              </span>
+              v3.2.0 - RESEARCH EDITION
             </div>
           </div>
-          {/* Hero image */}
-          <div
-            className="mx-auto max-w-3xl"
-            data-aos="zoom-y-out"
-            data-aos-delay={600}
-          >
-            <div className="relative aspect-video rounded-2xl bg-gray-900 px-5 py-3 shadow-xl before:pointer-events-none before:absolute before:-inset-5 before:border-y before:[border-image:linear-gradient(to_right,transparent,--theme(--color-slate-300/.8),transparent)1] after:absolute after:-inset-5 after:-z-10 after:border-x after:[border-image:linear-gradient(to_bottom,transparent,--theme(--color-slate-300/.8),transparent)1]">
-              <div className="relative mb-8 flex items-center justify-between before:block before:h-[9px] before:w-[41px] before:bg-[length:16px_9px] before:[background-image:radial-gradient(circle_at_4.5px_4.5px,var(--color-gray-600)_4.5px,transparent_0)] after:w-[41px]">
-                <span className="text-[13px] font-medium text-white">
-                  cruip.com
-                </span>
+
+          {/* Main headline with sci-fi effect */}
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
+              BioColab
+            </span>
+            <span className="block text-2xl md:text-4xl font-light text-gray-300 mt-4">
+              The <span className="text-cyan-400">GitHub</span> of Biological Research
+            </span>
+          </h1>
+
+          {/* Holographic description */}
+          <div className="max-w-3xl mx-auto mb-12">
+            <p className="text-xl text-gray-300 font-light leading-relaxed">
+              Collaborate on <span className="text-cyan-400">AI-powered</span> research with version-controlled labs, 
+              <span className="text-purple-400"> molecular simulations</span>, and global 
+              <span className="text-blue-400"> scientific challenges</span>.
+            </p>
+          </div>
+
+          {/* Cyberpunk-style buttons */}
+          <div className="flex flex-col sm:flex-row justify-center gap-4 mb-20">
+            <Link 
+              href="/signup" 
+              className="px-8 py-4 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-medium rounded-lg border-b-4 border-cyan-700 hover:border-cyan-600 transition-all hover:shadow-2xl hover:shadow-cyan-500/20 flex items-center justify-center gap-2"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              Launch Your Lab
+            </Link>
+            <Link 
+              href="/demo" 
+              className="px-8 py-4 bg-gray-800 hover:bg-gray-700 text-gray-100 font-medium rounded-lg border-b-4 border-gray-700 hover:border-gray-600 transition-all hover:shadow-2xl hover:shadow-white/5 flex items-center justify-center gap-2"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              Watch Demo
+            </Link>
+          </div>
+
+          {/* Holographic lab interface preview */}
+          <div className="relative max-w-6xl mx-auto h-[500px] rounded-2xl border-2 border-cyan-400/30 bg-gray-900/50 backdrop-blur-md overflow-hidden shadow-xl shadow-cyan-500/10">
+            {/* Grid overlay */}
+            <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] bg-[size:40px] opacity-10"></div>
+            
+            {/* Floating UI elements */}
+            <div className="absolute top-8 left-8 w-64 h-12 bg-cyan-500/10 rounded-lg border border-cyan-400/30 backdrop-blur-sm flex items-center px-4">
+              <div className="w-2 h-2 rounded-full bg-cyan-400 mr-2 animate-pulse"></div>
+              <span className="font-mono text-sm text-cyan-300">Running: ProteinFolding_Simulation_v3</span>
+            </div>
+            
+            {/* Main 3D visualization */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Image 
+                src="/molecule-visualization.png"
+                alt="3D molecule visualization"
+                fill
+                className="object-contain p-16"
+              />
+            </div>
+            
+            {/* Status bar */}
+            <div className="absolute bottom-0 left-0 right-0 h-16 bg-gray-900/80 border-t border-cyan-400/20 flex items-center px-6">
+              <div className="flex-1 font-mono text-sm text-cyan-400 flex items-center">
+                <span className="w-3 h-3 rounded-full bg-green-500 mr-2 animate-pulse"></span>
+                System Ready
               </div>
-              <div className="font-mono text-gray-500 [&_span]:opacity-0">
-                <span className="animate-[code-1_10s_infinite] text-gray-200">
-                  npm login
-                </span>{" "}
-                <span className="animate-[code-2_10s_infinite]">
-                  --registry=https://npm.pkg.github.com
-                </span>
-                <br />
-                <span className="animate-[code-3_10s_infinite]">
-                  --scope=@phanatic
-                </span>{" "}
-                <span className="animate-[code-4_10s_infinite]">
-                  Successfully logged-in.
-                </span>
-                <br />
-                <br />
-                <span className="animate-[code-5_10s_infinite] text-gray-200">
-                  npm publish
-                </span>
-                <br />
-                <span className="animate-[code-6_10s_infinite]">
-                  Package published.
-                </span>
+              <div className="flex items-center space-x-4">
+                <div className="text-xs text-gray-400 font-mono">AI CO-PILOT: ACTIVE</div>
+                <div className="h-8 w-px bg-cyan-400/20"></div>
+                <div className="text-xs text-gray-400 font-mono">3,421 RESEARCHERS ONLINE</div>
               </div>
             </div>
           </div>
