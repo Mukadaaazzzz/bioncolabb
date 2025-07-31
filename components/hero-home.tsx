@@ -34,14 +34,14 @@ export default function HeroHome() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
               </span>
-              v3.2.0 - RESEARCH EDITION
+              v1.0.0 - RESEARCH EDITION
             </div>
           </div>
 
           {/* Main headline with sci-fi effect */}
           <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
-              BioColab
+              Bioncolab
             </span>
             <span className="block text-2xl md:text-4xl font-light text-gray-300 mt-4">
               The <span className="text-cyan-400">GitHub</span> of Biological Research
@@ -83,36 +83,20 @@ export default function HeroHome() {
           {/* Holographic lab interface preview */}
           <div className="relative max-w-6xl mx-auto h-[500px] rounded-2xl border-2 border-cyan-400/30 bg-gray-900/50 backdrop-blur-md overflow-hidden shadow-xl shadow-cyan-500/10">
             {/* Grid overlay */}
-            <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] bg-[size:40px] opacity-10"></div>
+            <div className="relative max-w-6xl mx-auto h-[500px] rounded-2xl border-2 border-cyan-400/30 bg-white overflow-hidden shadow-xl shadow-cyan-500/10">
+  <img 
+    src="/glauc.png" 
+    alt="Main visual"
+    className="w-full h-full object-cover"
+  />
+</div>
             
             {/* Floating UI elements */}
-            <div className="absolute top-8 left-8 w-64 h-12 bg-cyan-500/10 rounded-lg border border-cyan-400/30 backdrop-blur-sm flex items-center px-4">
-              <div className="w-2 h-2 rounded-full bg-cyan-400 mr-2 animate-pulse"></div>
-              <span className="font-mono text-sm text-cyan-300">Running: ProteinFolding_Simulation_v3</span>
-            </div>
             
-            {/* Main 3D visualization */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <Image 
-                src="/molecule-visualization.png"
-                alt="3D molecule visualization"
-                fill
-                className="object-contain p-16"
-              />
-            </div>
             
-            {/* Status bar */}
-            <div className="absolute bottom-0 left-0 right-0 h-16 bg-gray-900/80 border-t border-cyan-400/20 flex items-center px-6">
-              <div className="flex-1 font-mono text-sm text-cyan-400 flex items-center">
-                <span className="w-3 h-3 rounded-full bg-green-500 mr-2 animate-pulse"></span>
-                System Ready
-              </div>
-              <div className="flex items-center space-x-4">
-                <div className="text-xs text-gray-400 font-mono">AI CO-PILOT: ACTIVE</div>
-                <div className="h-8 w-px bg-cyan-400/20"></div>
-                <div className="text-xs text-gray-400 font-mono">3,421 RESEARCHERS ONLINE</div>
-              </div>
-            </div>
+            
+            
+            
           </div>
         </div>
       </div>

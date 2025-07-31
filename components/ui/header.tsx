@@ -1,12 +1,15 @@
+import { useState } from 'react';
 import Link from "next/link";
 import Image from "next/image";
 
 export default function Header() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
     <header className="fixed w-full z-50 bg-white/90 backdrop-blur-md border-b border-slate-200/75">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Logo - Tight spacing */}
+          {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center group">
               <Image 
@@ -14,9 +17,8 @@ export default function Header() {
                 width={66} 
                 height={66} 
                 alt="Bioncolab Logo"
-                
               />
-              <span className="-ml-2 text-1x2 font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+              <span className="-ml-2 text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
                 Bioncolab
               </span>
             </Link>
@@ -26,35 +28,20 @@ export default function Header() {
           <nav className="hidden md:flex md:grow">
             <ul className="flex grow justify-end flex-wrap items-center space-x-1">
               <li>
-                <Link 
-                  href="/labs" 
-                  className="text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium transition duration-150 ease-in-out"
-                >
-                  Labs
-                </Link>
+                
+              </li>
+              <li>
+                
+              </li>
+              <li>
+                
               </li>
               <li>
                 <Link 
-                  href="/challenges" 
+                  href="/docs" 
                   className="text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium transition duration-150 ease-in-out"
                 >
-                  Challenges
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  href="/simulations" 
-                  className="text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium transition duration-150 ease-in-out"
-                >
-                  Simulations
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  href="/about" 
-                  className="text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium transition duration-150 ease-in-out"
-                >
-                  About
+                  Docs
                 </Link>
               </li>
               <li>
@@ -68,9 +55,13 @@ export default function Header() {
             </ul>
           </nav>
 
-          {/* Mobile menu button - Only shows menu icon */}
+          {/* Mobile menu button and menu */}
           <div className="md:hidden flex items-center">
-            <button className="text-gray-500 hover:text-gray-600 p-2">
+            <button 
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="text-gray-500 hover:text-gray-600 p-2"
+              aria-label="Toggle menu"
+            >
               <svg className="w-6 h-6" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <rect y="4" width="24" height="2" rx="1" fill="currentColor"/>
                 <rect y="11" width="24" height="2" rx="1" fill="currentColor"/>
@@ -79,6 +70,32 @@ export default function Header() {
             </button>
           </div>
         </div>
+
+        {/* Mobile menu dropdown */}
+        {mobileMenuOpen && (
+          <div className="md:hidden pb-4">
+            <div className="pt-2 space-y-2">
+             
+              
+              <Link 
+                href="/docs" 
+                className="block px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Docs
+              </Link>
+              
+               
+              <Link 
+                href="/signin" 
+                className="block px-3 py-2 text-blue-600 hover:bg-blue-50 rounded-md font-medium"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Sign in
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
     </header>
   );
