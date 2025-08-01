@@ -81,15 +81,20 @@ export default function HeroHome() {
           </div>
 
           {/* Holographic lab interface preview */}
-          <div className="relative max-w-6xl mx-auto h-[500px] rounded-2xl border-2 border-cyan-400/30 bg-gray-900/50 backdrop-blur-md overflow-hidden shadow-xl shadow-cyan-500/10">
-            {/* Grid overlay */}
-            <div className="relative max-w-6xl mx-auto h-[500px] rounded-2xl border-2 border-cyan-400/30 bg-white overflow-hidden shadow-xl shadow-cyan-500/10">
-  <img 
-    src="/glauc.png" 
-    alt="Main visual"
-    className="w-full h-full object-cover"
-  />
+     <div className="relative mx-auto max-w-4xl h-[300px] sm:h-[400px] md:h-[450px] lg:h-[500px] rounded-2xl overflow-hidden shadow-xl shadow-cyan-500/10">
+  {/* Animated border */}
+  <div className="absolute inset-0 rounded-2xl border-4 border-transparent bg-clip-padding before:absolute before:inset-0 before:rounded-2xl before:border-[3px] before:animate-borderGradient before:border-transparent before:bg-[conic-gradient(at_top_left,_cyan,blue,indigo,violet,cyan)] before:bg-[length:200%_200%] before:blur-md z-0" />
+
+  {/* Image container */}
+  <div className="relative z-10 h-full w-full rounded-2xl overflow-hidden bg-gray-900/60 backdrop-blur-md">
+    <img 
+      src="/sd.jpg" 
+      alt="Main visual"
+      className="w-full h-full object-cover"
+    />
+  
 </div>
+
             
             {/* Floating UI elements */}
             

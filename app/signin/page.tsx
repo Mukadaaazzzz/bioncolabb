@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
-import { signInWithEmail } from '../lib/supabase'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { signInWithEmail, supabase } from '../lib/supabase'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { FiLogIn, FiMail, FiLock, FiArrowRight } from 'react-icons/fi'
 import Head from 'next/head'
@@ -15,21 +15,57 @@ export default function SignInPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
+
+  // Get the redirect URL from search params
+  const redirectTo = searchParams?.get('redirectTo') || '/dashboard'
+
+  // Check if user is already authenticated
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        console.log('User already authenticated, redirecting...')
+        router.push(redirectTo)
+      }
+    }
+    checkUser()
+  }, [router, redirectTo])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
 
-    const { error } = await signInWithEmail(email, password)
+    try {
+      console.log('Attempting sign in...')
+      const { data, error } = await signInWithEmail(email, password)
 
-    if (error) {
-      setError(error.message)
-    } else {
-      router.push('/dashboard')
+      if (error) {
+        console.error('Sign in error:', error)
+        setError(error.message)
+        setLoading(false)
+        return
+      }
+
+      console.log('Sign in successful:', data)
+
+      if (data?.session) {
+        console.log('Session created, redirecting to:', redirectTo)
+        // Small delay to ensure session is set
+        setTimeout(() => {
+          router.refresh()
+          router.push(redirectTo)
+        }, 100)
+      } else {
+        setError('Authentication failed. Please try again.')
+        setLoading(false)
+      }
+    } catch (err: any) {
+      console.error('Unexpected error:', err)
+      setError(err.message || 'An unexpected error occurred')
+      setLoading(false)
     }
-
-    setLoading(false)
   }
 
   return (
