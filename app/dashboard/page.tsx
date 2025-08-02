@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import { FiPlus, FiHome, FiSettings, FiLogOut, FiMenu, FiX, FiTarget, FiUsers } from 'react-icons/fi'
+import { FiPlus, FiHome, FiSettings, FiLogOut, FiMenu, FiX, FiTarget, FiUsers, FiEdit, FiTrash2, FiMoreVertical } from 'react-icons/fi'
 import Link from 'next/link'
 import Image from 'next/image'
 import Header from '@/components/ui/header'
@@ -16,6 +16,10 @@ export default function DashboardPage() {
   const [openColabs, setOpenColabs] = useState<any[]>([])
   const [challenges, setChallenges] = useState<any[]>([])
   const [showCreateModal, setShowCreateModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [editingColab, setEditingColab] = useState<any>(null)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [deletingColab, setDeletingColab] = useState<any>(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [loading, setLoading] = useState(true)
   const [profile, setProfile] = useState<any>(null)
@@ -152,6 +156,77 @@ export default function DashboardPage() {
 
     setUserColabs([data, ...userColabs])
     setShowCreateModal(false)
+  }
+
+  const handleEditColab = async (name: string, description: string, readme: string) => {
+    if (!editingColab) return
+
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+    
+    const { data, error } = await supabase
+      .from('colabs')
+      .update({
+        name,
+        slug,
+        description,
+        readme
+      })
+      .eq('id', editingColab.id)
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Error updating colab:', error)
+      return
+    }
+
+    // Update the local state
+    setUserColabs(userColabs.map(colab => 
+      colab.id === editingColab.id ? data : colab
+    ))
+    setShowEditModal(false)
+    setEditingColab(null)
+  }
+
+  const handleDeleteColab = async () => {
+    if (!deletingColab) return
+
+    // Delete colab members first
+    const { error: membersError } = await supabase
+      .from('colab_members')
+      .delete()
+      .eq('colab_id', deletingColab.id)
+
+    if (membersError) {
+      console.error('Error deleting colab members:', membersError)
+      return
+    }
+
+    // Delete the colab
+    const { error } = await supabase
+      .from('colabs')
+      .delete()
+      .eq('id', deletingColab.id)
+
+    if (error) {
+      console.error('Error deleting colab:', error)
+      return
+    }
+
+    // Update local state
+    setUserColabs(userColabs.filter(colab => colab.id !== deletingColab.id))
+    setShowDeleteConfirm(false)
+    setDeletingColab(null)
+  }
+
+  const openEditModal = (colab: any) => {
+    setEditingColab(colab)
+    setShowEditModal(true)
+  }
+
+  const openDeleteConfirm = (colab: any) => {
+    setDeletingColab(colab)
+    setShowDeleteConfirm(true)
   }
 
   // Debug function - you can remove this after testing
@@ -358,7 +433,44 @@ export default function DashboardPage() {
                 ) : userColabs.length > 0 ? (
                   <div className="space-y-3">
                     {userColabs.slice(0, 4).map(colab => (
-                      <ColabCard key={colab.id} colab={colab}  />
+                      <div key={colab.id} className="border border-gray-200 rounded-lg p-4 hover:border-blue-200 transition-colors">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex-1">
+                            <h3 className="text-md font-semibold text-blue-600 hover:text-blue-700 mb-1">
+                              <Link href={`/colab/${colab.slug}`}>{colab.name}</Link>
+                            </h3>
+                            <p className="text-sm text-gray-600 line-clamp-2 mb-2">
+                              {colab.description || 'No description available'}
+                            </p>
+                            <div className="flex items-center gap-2 text-xs">
+                              <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+                                {colab.is_public ? 'Public' : 'Private'}
+                              </span>
+                              <span className="text-gray-500">
+                                Created {new Date(colab.created_at).toLocaleDateString()}
+                              </span>
+                            </div>
+                          </div>
+                          
+                          {/* Action buttons */}
+                          <div className="flex items-center gap-1 ml-3">
+                            <button
+                              onClick={() => openEditModal(colab)}
+                              className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                              title="Edit colab"
+                            >
+                              <FiEdit className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => openDeleteConfirm(colab)}
+                              className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                              title="Delete colab"
+                            >
+                              <FiTrash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                     ))}
                   </div>
                 ) : (
@@ -475,6 +587,63 @@ export default function DashboardPage() {
           onCloseAction={() => setShowCreateModal(false)}
           onCreateAction={handleCreateColab}
         />
+      )}
+
+      {/* Edit Colab Modal */}
+      {showEditModal && editingColab && (
+        <CreateColabModal 
+          onCloseAction={() => {
+            setShowEditModal(false)
+            setEditingColab(null)
+          }}
+          onCreateAction={handleEditColab}
+          initialData={{
+            name: editingColab.name,
+            description: editingColab.description,
+            readme: editingColab.readme
+          }}
+          isEditing={true}
+        />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && deletingColab && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                <FiTrash2 className="w-5 h-5 text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Delete Colab</h3>
+                <p className="text-sm text-gray-500">This action cannot be undone</p>
+              </div>
+            </div>
+            
+            <p className="text-gray-700 mb-6">
+              Are you sure you want to delete <strong>"{deletingColab.name}"</strong>? 
+              This will permanently remove the colab and all its data.
+            </p>
+            
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => {
+                  setShowDeleteConfirm(false)
+                  setDeletingColab(null)
+                }}
+                className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteColab}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors"
+              >
+                Delete Colab
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )

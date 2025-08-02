@@ -1,19 +1,38 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { FiX } from 'react-icons/fi'
+
+interface CreateColabModalProps {
+  onCloseAction: () => void
+  onCreateAction: (name: string, description: string, readme: string) => Promise<void>
+  initialData?: {
+    name: string
+    description: string
+    readme: string
+  }
+  isEditing?: boolean
+}
 
 export default function CreateColabModal({ 
   onCloseAction, 
-  onCreateAction 
-}: { 
-  onCloseAction: () => void, 
-  onCreateAction: (name: string, description: string, readme: string) => Promise<void> 
-}) {
+  onCreateAction,
+  initialData,
+  isEditing = false
+}: CreateColabModalProps) {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [readme, setReadme] = useState('')
   const [loading, setLoading] = useState(false)
+
+  // Pre-fill form when editing
+  useEffect(() => {
+    if (initialData) {
+      setName(initialData.name || '')
+      setDescription(initialData.description || '')
+      setReadme(initialData.readme || '')
+    }
+  }, [initialData])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -22,7 +41,7 @@ export default function CreateColabModal({
     setLoading(true)
     try {
       await onCreateAction(name, description, readme)
-      onCloseAction()
+      // Don't call onCloseAction here - let the parent handle it after successful operation
     } finally {
       setLoading(false)
     }
@@ -33,7 +52,9 @@ export default function CreateColabModal({
       <div className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-900">Create New Colab</h2>
+            <h2 className="text-xl font-semibold text-gray-900">
+              {isEditing ? 'Edit Colab' : 'Create New Colab'}
+            </h2>
             <button onClick={onCloseAction} className="text-gray-400 hover:text-gray-500">
               <FiX className="text-xl" />
             </button>
@@ -89,7 +110,10 @@ export default function CreateColabModal({
                 disabled={loading || !name.trim()}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
               >
-                {loading ? 'Creating...' : 'Create Colab'}
+                {loading 
+                  ? (isEditing ? 'Updating...' : 'Creating...') 
+                  : (isEditing ? 'Update Colab' : 'Create Colab')
+                }
               </button>
             </div>
           </form>
