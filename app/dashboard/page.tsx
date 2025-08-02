@@ -45,14 +45,58 @@ export default function DashboardPage() {
         .eq('status', 'accepted')
       setUserColabs(colabData?.map((item: any) => item.colabs) || [])
 
-      // Fetch all public colabs (Open Colabs)
-      const { data: openColabData } = await supabase
-        .from('colabs')
-        .select('*, profiles(full_name, username)')
-        .eq('is_public', true)
-        .order('created_at', { ascending: false })
-        .limit(6)
-      setOpenColabs(openColabData || [])
+      // Fetch all public colabs (Open Colabs) - FIXED VERSION
+      try {
+        // First, try with the join
+        const { data: openColabData, error: joinError } = await supabase
+          .from('colabs')
+          .select(`
+            *,
+            profiles!colabs_owner_id_fkey(full_name, username, avatar_url)
+          `)
+          .eq('is_public', true)
+          .order('created_at', { ascending: false })
+          .limit(6)
+
+        if (joinError) {
+          console.warn('Join query failed, trying alternative approach:', joinError)
+          
+          // Alternative approach: fetch colabs first, then fetch owner details separately
+          const { data: colabsOnly, error: colabsError } = await supabase
+            .from('colabs')
+            .select('*')
+            .eq('is_public', true)
+            .order('created_at', { ascending: false })
+            .limit(6)
+
+          if (colabsError) {
+            console.error('Error fetching colabs:', colabsError)
+            setOpenColabs([])
+          } else if (colabsOnly && colabsOnly.length > 0) {
+            // Fetch owner details separately
+            const ownerIds = Array.from(new Set(colabsOnly.map(colab => colab.owner_id)))
+            const { data: ownersData } = await supabase
+              .from('profiles')
+              .select('id, full_name, username, avatar_url')
+              .in('id', ownerIds)
+
+            // Combine colab data with owner data
+            const enrichedColabs = colabsOnly.map(colab => ({
+              ...colab,
+              profiles: ownersData?.find(owner => owner.id === colab.owner_id) || null
+            }))
+
+            setOpenColabs(enrichedColabs)
+          } else {
+            setOpenColabs([])
+          }
+        } else {
+          setOpenColabs(openColabData || [])
+        }
+      } catch (error) {
+        console.error('Error in open colabs fetch:', error)
+        setOpenColabs([])
+      }
 
       // Fetch challenges
       const { data: challengeData } = await supabase
@@ -108,6 +152,13 @@ export default function DashboardPage() {
 
     setUserColabs([data, ...userColabs])
     setShowCreateModal(false)
+  }
+
+  // Debug function - you can remove this after testing
+  const debugOpenColabs = () => {
+    console.log('Open Colabs Data:', openColabs)
+    console.log('Loading:', loading)
+    console.log('Open Colabs Length:', openColabs.length)
   }
 
   return (
@@ -325,7 +376,7 @@ export default function DashboardPage() {
                 )}
               </div>
               
-              {/* Open Colabs */}
+              {/* Open Colabs - FIXED VERSION */}
               <div className="bg-white p-6 rounded-xl shadow-sm">
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
@@ -334,9 +385,19 @@ export default function DashboardPage() {
                     </div>
                     <h2 className="text-xl font-bold text-gray-900">Open Colabs</h2>
                   </div>
-                  <Link href="/colabs/explore" className="text-blue-600 hover:text-blue-700 font-medium text-sm">
-                    Explore all
-                  </Link>
+                  <div className="flex items-center gap-2">
+                    <Link href="/colabs/explore" className="text-blue-600 hover:text-blue-700 font-medium text-sm">
+                      Explore all
+                    </Link>
+                    {/* Debug button - remove after testing */}
+                    <button 
+                      onClick={debugOpenColabs}
+                      className="text-xs text-gray-400 hover:text-gray-600"
+                      title="Debug (remove this)"
+                    >
+                      🐛
+                    </button>
+                  </div>
                 </div>
                 
                 {loading ? (
@@ -345,7 +406,7 @@ export default function DashboardPage() {
                       <div key={i} className="h-16 bg-gray-100 rounded-lg animate-pulse"></div>
                     ))}
                   </div>
-                ) : openColabs.length > 0 ? (
+                ) : openColabs && openColabs.length > 0 ? (
                   <div className="space-y-3">
                     {openColabs.slice(0, 3).map(colab => (
                       <div key={colab.id} className="border border-gray-200 rounded-lg p-4 hover:border-blue-200 transition-colors">
@@ -354,22 +415,32 @@ export default function DashboardPage() {
                             {colab.profiles?.avatar_url ? (
                               <img src={colab.profiles.avatar_url} alt="Profile" className="w-full h-full object-cover" />
                             ) : (
-                              <span className="text-xs text-white">{(colab.profiles?.full_name || 'U')[0]}</span>
+                              <span className="text-xs text-white font-medium">
+                                {(colab.profiles?.full_name || colab.profiles?.username || 'U')[0].toUpperCase()}
+                              </span>
                             )}
                           </div>
                           <div>
-                            <p className="text-sm font-medium text-gray-900">{colab.profiles?.full_name || 'Anonymous'}</p>
-                            <p className="text-xs text-gray-500">{new Date(colab.created_at).toLocaleDateString()}</p>
+                            <p className="text-sm font-medium text-gray-900">
+                              {colab.profiles?.full_name || colab.profiles?.username || 'Anonymous'}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {new Date(colab.created_at).toLocaleDateString()}
+                            </p>
                           </div>
                         </div>
                         
                         <h3 className="text-md font-semibold text-blue-600 hover:text-blue-700 mb-1">
                           <Link href={`/colab/${colab.slug}`}>{colab.name}</Link>
                         </h3>
-                        <p className="text-sm text-gray-600 line-clamp-2 mb-3">{colab.description}</p>
+                        <p className="text-sm text-gray-600 line-clamp-2 mb-3">
+                          {colab.description || 'No description available'}
+                        </p>
                         
                         <div className="flex items-center gap-2 text-xs">
-                          <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full">Open Source</span>
+                          <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full">
+                            Open Source
+                          </span>
                           <span className="text-gray-500">0 contributors</span>
                         </div>
                       </div>
@@ -380,8 +451,16 @@ export default function DashboardPage() {
                     <div className="w-12 h-12 rounded-full bg-gradient-to-r from-green-400 to-blue-500 mx-auto mb-4 flex items-center justify-center">
                       <FiUsers className="w-5 h-5 text-white" />
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-700 mb-2">No open colabs</h3>
-                    <p className="text-gray-500 text-sm">Check back later for collaboration opportunities</p>
+                    <h3 className="text-lg font-semibold text-gray-700 mb-2">No open colabs available</h3>
+                    <p className="text-gray-500 text-sm mb-4">
+                      Be the first to create a public collaboration
+                    </p>
+                    <button 
+                      onClick={() => setShowCreateModal(true)}
+                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium text-sm"
+                    >
+                      Create public colab
+                    </button>
                   </div>
                 )}
               </div>
